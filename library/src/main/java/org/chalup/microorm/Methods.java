@@ -23,7 +23,7 @@ final class Methods {
     static <T> Object getValueFromGetterForField(String name, Object object) {
         Method[] methods = object.getClass().getDeclaredMethods();
         for (Method method : methods) {
-            if (("get" + name).equals(method.getName().toLowerCase()) && Modifier.isPublic(method.getModifiers())) {
+            if (("get" + name).equalsIgnoreCase(method.getName()) && Modifier.isPublic(method.getModifiers())) {
                 try {
                     return method.invoke(object);
                 } catch (IllegalAccessException e) {

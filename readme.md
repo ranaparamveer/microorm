@@ -106,7 +106,7 @@ Just add the dependency to your `build.gradle`:
 
 ```groovy
 dependencies {
-    compile 'com.github.ranaparamveer:microorm:0.8.3'
+    compile 'com.github.ranaparamveer:microorm:0.8.4'
 }
 ```
 
