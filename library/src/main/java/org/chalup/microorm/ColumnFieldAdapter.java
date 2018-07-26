@@ -22,51 +22,52 @@ import android.content.ContentValues;
 import android.database.Cursor;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 class ColumnFieldAdapter extends FieldAdapter {
 
-  private static final String[] EMPTY_ARRAY = new String[0];
+    private static final String[] EMPTY_ARRAY = new String[0];
 
-  private final String mColumnName;
-  private final String[] mColumnNames;
-  private final TypeAdapter<?> mTypeAdapter;
-  private final boolean mTreatNullAsDefault;
-  private final boolean mReadonly;
+    private final String mColumnName;
+    private final String[] mColumnNames;
+    private final TypeAdapter<?> mTypeAdapter;
+    private final boolean mTreatNullAsDefault;
+    private final boolean mReadonly;
 
-  ColumnFieldAdapter(Field field, TypeAdapter<?> typeAdapter) {
-    super(field);
-    mTypeAdapter = typeAdapter;
+    ColumnFieldAdapter(Field field, TypeAdapter<?> typeAdapter) {
+        super(field);
+        mTypeAdapter = typeAdapter;
 
-    Column columnAnnotation = field.getAnnotation(Column.class);
-    mColumnName = columnAnnotation.value();
-    mColumnNames = new String[] { mColumnName };
-    mTreatNullAsDefault = columnAnnotation.treatNullAsDefault();
-    mReadonly = columnAnnotation.readonly();
-  }
-
-  @Override
-  public void setValueFromCursor(Cursor inCursor, Object outTarget) throws IllegalArgumentException, IllegalAccessException {
-    mField.set(outTarget, mTypeAdapter.fromCursor(inCursor, mColumnName));
-  }
-
-  @SuppressWarnings("unchecked")
-  @Override
-  protected void putValueToContentValues(Object fieldValue, ContentValues outValues) {
-    boolean skipColumn = mReadonly || (mTreatNullAsDefault && fieldValue == null);
-    if (!skipColumn) {
-      ((TypeAdapter<Object>) mTypeAdapter).toContentValues(outValues, mColumnName, fieldValue);
+        Column columnAnnotation = field.getAnnotation(Column.class);
+        mColumnName = columnAnnotation.value();
+        mColumnNames = new String[]{mColumnName};
+        mTreatNullAsDefault = columnAnnotation.treatNullAsDefault();
+        mReadonly = columnAnnotation.readonly();
     }
-  }
 
-  @Override
-  public String[] getColumnNames() {
-    return mColumnNames;
-  }
+    @Override
+    public void setValueFromCursor(Cursor inCursor, Object outTarget) throws IllegalArgumentException, IllegalAccessException {
+        mField.set(outTarget, mTypeAdapter.fromCursor(inCursor, mColumnName));
+    }
 
-  @Override
-  public String[] getWritableColumnNames() {
-    return mReadonly
-        ? EMPTY_ARRAY
-        : getColumnNames();
-  }
+    @SuppressWarnings("unchecked")
+    @Override
+    protected void putValueToContentValues(Object fieldValue, ContentValues outValues) {
+        boolean skipColumn = mReadonly || (mTreatNullAsDefault && fieldValue == null);
+        if (!skipColumn) {
+            ((TypeAdapter<Object>) mTypeAdapter).toContentValues(outValues, mColumnName, fieldValue);
+        }
+    }
+
+    @Override
+    public String[] getColumnNames() {
+        return mColumnNames;
+    }
+
+    @Override
+    public String[] getWritableColumnNames() {
+        return mReadonly
+                ? EMPTY_ARRAY
+                : getColumnNames();
+    }
 }

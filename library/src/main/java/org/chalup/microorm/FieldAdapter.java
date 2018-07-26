@@ -20,6 +20,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 abstract class FieldAdapter {
 
@@ -28,12 +29,20 @@ abstract class FieldAdapter {
   FieldAdapter(Field field) {
     mField = field;
   }
-
+  FieldAdapter(Field field,Method method) {
+    mField = field;
+  }
   public abstract void setValueFromCursor(Cursor inCursor, Object outTarget)
       throws IllegalArgumentException, IllegalAccessException;
 
   public void putToContentValues(Object inObject, ContentValues outValues) throws IllegalAccessException {
-    Object value = inObject != null ? mField.get(inObject) : null;
+    Object value=null;
+    if(inObject!=null) {
+      if (Methods.containsPublicGetterForField(mField.getName(), inObject))
+        value = Methods.getValueFromGetterForField(mField.getName(), inObject);
+      else
+        value=mField.get(inObject);
+    }
     putValueToContentValues(value, outValues);
   }
 
