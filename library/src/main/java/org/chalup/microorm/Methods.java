@@ -6,15 +6,13 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 
 final class Methods {
-    private static Method[] methods;
-
     private Methods() {
 
     }
 
     static <T> boolean containsPublicGetterForField(String name, Object object) {
-        if (methods == null)
-            methods =  object.getClass().getDeclaredMethods();
+
+        Method[] methods = object.getClass().getDeclaredMethods();
         for (Method method : methods) {
             if (("get" + name).equals(method.getName().toLowerCase()) && Modifier.isPublic(method.getModifiers()))
                 return true;
@@ -23,8 +21,7 @@ final class Methods {
     }
 
     static <T> Object getValueFromGetterForField(String name, Object object) {
-        if (methods == null)
-            methods =  object.getClass().getDeclaredMethods();
+        Method[] methods = object.getClass().getDeclaredMethods();
         for (Method method : methods) {
             if (("get" + name).equals(method.getName().toLowerCase()) && Modifier.isPublic(method.getModifiers())) {
                 try {
