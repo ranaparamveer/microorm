@@ -14,7 +14,7 @@ final class Methods {
 
         Method[] methods = object.getClass().getDeclaredMethods();
         for (Method method : methods) {
-            if (("get" + name).equals(method.getName().toLowerCase()) && Modifier.isPublic(method.getModifiers()))
+            if (("get" + name).equalsIgnoreCase(method.getName()) && Modifier.isPublic(method.getModifiers()))
                 return true;
         }
         return false;
